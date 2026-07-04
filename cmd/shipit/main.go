@@ -9,10 +9,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/alluri02/go-shipit/internal/adapters/inmemory"
 	"github.com/alluri02/go-shipit/internal/domain"
 	httpserver "github.com/alluri02/go-shipit/internal/transport/http"
+	"github.com/alluri02/go-shipit/internal/transport/worker"
 )
 
 func main() {
@@ -22,6 +24,8 @@ func main() {
 		fmt.Println("\nUsage: shipit <command>")
 		fmt.Println("\nCommands:")
 		fmt.Println("  serve          Start all services locally")
+		fmt.Println("  demo           Run demo (DI + error handling)")
+		fmt.Println("  process        Run worker processor demo (goroutines)")
 		fmt.Println("  version        Print version info")
 		fmt.Println("  help           Show this message")
 		os.Exit(0)
@@ -93,6 +97,42 @@ func main() {
 		if err != nil {
 			fmt.Printf("✓ Expected error: %v\n", err)
 		}
+	case "process":
+		// --- Lesson 07: Goroutines & Channels ---
+		// Demonstrates concurrent processing with worker pool pattern.
+		repo := inmemory.NewRepository()
+		queue := inmemory.NewQueue()
+		notifier := inmemory.NewNotifier()
+		service := domain.NewDeployService(repo, queue, notifier)
+
+		fmt.Println("--- Goroutines & Channels (Lesson 07) ---")
+		fmt.Println("Starting processor with 3 workers...")
+		fmt.Println()
+
+		// Create processor: 3 workers, buffer of 10 jobs
+		proc := worker.NewProcessor(service, 3, 10)
+		proc.Start()
+
+		// Submit 5 jobs — they'll be processed concurrently by 3 workers
+		jobs := []worker.DeployJob{
+			{DeploymentID: "deploy-001", ServiceName: "payments-api", ImageTag: "v2.4.1", Environment: "staging", Region: "eastus"},
+			{DeploymentID: "deploy-002", ServiceName: "auth-service", ImageTag: "v1.0.0", Environment: "staging", Region: "eastus"},
+			{DeploymentID: "deploy-003", ServiceName: "notifications", ImageTag: "v3.2.0", Environment: "production", Region: "westus"},
+			{DeploymentID: "deploy-004", ServiceName: "payments-api", ImageTag: "v2.4.2", Environment: "production", Region: "eastus"},
+			{DeploymentID: "deploy-005", ServiceName: "gateway", ImageTag: "v5.1.0", Environment: "staging", Region: "westeurope"},
+		}
+
+		for _, job := range jobs {
+			proc.Submit(job)
+			fmt.Printf("→ Submitted: %s (%s)\n", job.DeploymentID, job.ServiceName)
+		}
+
+		fmt.Println("\nAll jobs submitted. Workers processing concurrently...\n")
+		time.Sleep(100 * time.Millisecond) // Let workers start before we close
+
+		// Stop and wait for all workers to complete
+		proc.Stop()
+		fmt.Println("\n✓ All deployments processed!")
 	case "help":
 		printBanner()
 	default:

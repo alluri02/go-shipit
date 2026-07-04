@@ -55,7 +55,7 @@ A deployment pipeline orchestrator that:
 | 04 | Error Handling | Domain service errors | [Lesson 04](docs/04-error-handling.md) |
 | 05 | Dependency Injection | Wire services manually | [Lesson 05](docs/05-dependency-injection.md) |
 | 06 | HTTP Server (`net/http`) | httpservice scaffold | [Lesson 06](docs/06-http-server.md) |
-| 07 | Goroutines & Channels | webhookprocessor workers | — |
+| 07 | Goroutines & Channels | webhookprocessor workers | [Lesson 07](docs/07-goroutines-channels.md) |
 | 08 | Testing (table-driven) | Unit tests | — |
 | 09 | Configuration & Env | Config loading | — |
 | 10 | Database (SQL, no ORM) | MySQL adapter + Skeema | — |
