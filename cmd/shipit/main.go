@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/alluri02/go-shipit/internal/adapters/inmemory"
 	"github.com/alluri02/go-shipit/internal/domain"
 )
 
@@ -36,35 +37,45 @@ func main() {
 		fmt.Println("   ChatOps:     connected")
 		fmt.Println("   Processor:   2 workers")
 	case "demo":
-		// Demonstrates domain models from Lesson 02
+		// --- Lesson 05: Dependency Injection ---
+		// This is the "composition root" — where we wire all dependencies.
+		// In C#, this is Startup.cs / Program.cs with services.AddScoped<>().
+		// In Java, this is Spring's @Configuration class.
+		// In Go, it's just... function calls in main().
+
+		// Step 1: Create adapters (concrete implementations)
+		repo := inmemory.NewRepository()
+		queue := inmemory.NewQueue()
+		notifier := inmemory.NewNotifier()
+
+		// Step 2: Inject into domain service (constructor injection)
+		service := domain.NewDeployService(repo, queue, notifier)
+
+		// Step 3: Use the service — it doesn't know about inmemory adapters
+		fmt.Println("--- Dependency Injection (Lesson 05) ---")
 		env := domain.NewEnvironment("production", "eastus", "https://myapp.azurecontainerapps.io")
-		deploy := domain.NewDeployment("deploy-001", "payments-api", "v2.4.1", "github-webhook", env)
 
-		fmt.Printf("Deployment: %s → %s (%s)\n", deploy.ServiceName, deploy.Environment.Name, deploy.Status)
-		fmt.Printf("Requires approval: %v\n", deploy.ShouldRequireApproval())
+		deploy, err := service.StartDeploy("deploy-001", "payments-api", "v2.4.1", "github-webhook", env)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("✓ Created deployment: %s (%s)\n", deploy.ID, deploy.Status)
 
-		deploy.Advance(domain.DeployStatusBuilding)
-		fmt.Printf("Status after advance: %s\n", deploy.Status)
+		// Step 4: Retrieve it back from the repo (through the service)
+		fetched, err := service.GetDeploy("deploy-001")
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("✓ Fetched from repo: %s → %s\n", fetched.ServiceName, fetched.Environment.Name)
 
-		deploy.RiskScore = 8
-		fmt.Printf("High risk: %v (score: %d)\n", deploy.IsHighRisk(), deploy.RiskScore)
-
-		// Lesson 04: Error handling demo
+		// Step 5: Show error handling — try to fetch a non-existent deploy
 		fmt.Println("\n--- Error Handling (Lesson 04) ---")
-
-		// Validation errors
-		if err := domain.ValidateDeployment("", "v1.0", "api"); err != nil {
-			fmt.Printf("Validation error: %v\n", err)
+		_, err = service.GetDeploy("does-not-exist")
+		if err != nil {
+			fmt.Printf("✓ Expected error: %v\n", err)
 		}
-
-		// State transition errors (AdvanceSafe)
-		if err := deploy.AdvanceSafe(domain.DeployStatusPending); err != nil {
-			fmt.Printf("State error: %v\n", err)
-		}
-
-		// Wrapping errors
-		wrapped := domain.WrapNotFound("deployment", "deploy-999")
-		fmt.Printf("Wrapped error: %v\n", wrapped)
 	case "help":
 		printBanner()
 	default:
