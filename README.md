@@ -50,8 +50,8 @@ A deployment pipeline orchestrator that:
 | # | Go Concept | ShipIt Progress | Doc |
 |---|-----------|-----------------|-----|
 | 01 | Modules & Packages | Project init, folder structure | [Lesson 01](docs/01-modules-and-packages.md) |
-| 02 | Types, Structs & Methods | Domain models | Coming next |
-| 03 | Interfaces (implicit) | Port definitions | — |
+| 02 | Types, Structs & Methods | Domain models | [Lesson 02](docs/02-types-structs-methods.md) |
+| 03 | Interfaces (implicit) | Port definitions | [Lesson 03](docs/03-interfaces-implicit.md) |
 | 04 | Error Handling | Domain service errors | — |
 | 05 | Dependency Injection | Wire services manually | — |
 | 06 | HTTP Server (`net/http`) | httpservice scaffold | — |
