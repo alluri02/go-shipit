@@ -25,12 +25,12 @@ A deployment pipeline orchestrator that:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Triggers: Slack ChatOps │ GitHub Webhooks │ REST Clients    │
+│  Triggers: Slack ChatOps │ GitHub Webhooks │ REST Clients   │
 └─────────────────┬───────────────────────────────────────────┘
                   ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Transport Layer (single binary, 4 subcommands)             │
-│  httpservice │ chatopsservice │ webhookreceiver │ processor  │
+│  httpservice │ chatopsservice │ webhookreceiver │ processor │
 └─────────────────┬───────────────────────────────────────────┘
                   ▼
 ┌─────────────────────────────────────────────────────────────┐

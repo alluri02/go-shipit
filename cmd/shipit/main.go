@@ -35,6 +35,19 @@ func main() {
 		fmt.Println("   Webhooks:    http://localhost:8081")
 		fmt.Println("   ChatOps:     connected")
 		fmt.Println("   Processor:   2 workers")
+	case "demo":
+		// Demonstrates domain models from Lesson 02
+		env := domain.NewEnvironment("production", "eastus", "https://myapp.azurecontainerapps.io")
+		deploy := domain.NewDeployment("deploy-001", "payments-api", "v2.4.1", "github-webhook", env)
+
+		fmt.Printf("Deployment: %s → %s (%s)\n", deploy.ServiceName, deploy.Environment.Name, deploy.Status)
+		fmt.Printf("Requires approval: %v\n", deploy.ShouldRequireApproval())
+
+		deploy.Advance(domain.DeployStatusBuilding)
+		fmt.Printf("Status after advance: %s\n", deploy.Status)
+
+		deploy.RiskScore = 8
+		fmt.Printf("High risk: %v (score: %d)\n", deploy.IsHighRisk(), deploy.RiskScore)
 	case "help":
 		printBanner()
 	default:
@@ -45,11 +58,11 @@ func main() {
 
 func printBanner() {
 	fmt.Printf(`
-   _____ __    _ ____  ____
-  / ___// /_  (_) __ \/  _/
-  \__ \/ __ \/ / /_/ // /    v%s
- ___/ / / / / / ____// /     Deployment Orchestrator
-/____/_/ /_/_/_/   /___/     github.com/alluri02/go-shipit
+   _____ __    _ ____ ____ ______
+  / ___// /_  (_) __ \/  _/_  __/
+  \__ \/ __ \/ / /_/ // /   / /     v%s
+ ___/ / / / / / ____// /   / /      Deployment Orchestrator
+/____/_/ /_/_/_/   /___/  /_/       github.com/alluri02/go-shipit
 
 `, domain.Version)
 }
