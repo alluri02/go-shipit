@@ -52,8 +52,8 @@ func main() {
 		notifier := inmemory.NewNotifier()
 		service := domain.NewDeployService(repo, queue, notifier)
 
-		// Create and start the server using config
-		srv := httpserver.NewServer(cfg.ServerAddr, service)
+		// Create server with graceful shutdown (Lesson 11)
+		srv := httpserver.NewGracefulServer(cfg.ServerAddr, service)
 		printBanner()
 		fmt.Printf("HTTP API running at http://localhost%s\n", cfg.ServerAddr)
 		fmt.Printf("Environment: %s | Workers: %d\n", cfg.Env, cfg.WorkerCount)
@@ -62,8 +62,8 @@ func main() {
 		fmt.Println("  POST /deploys")
 		fmt.Println("  GET  /deploys/{id}")
 		fmt.Println("  GET  /deploys?service=name")
-		fmt.Print("\nPress Ctrl+C to stop.\n\n")
-		if err := srv.Start(); err != nil {
+		fmt.Print("\nPress Ctrl+C to stop (graceful shutdown).\n\n")
+		if err := srv.StartWithGracefulShutdown(); err != nil {
 			log.Fatalf("server error: %v", err)
 		}
 	case "demo":
