@@ -48,6 +48,23 @@ func main() {
 
 		deploy.RiskScore = 8
 		fmt.Printf("High risk: %v (score: %d)\n", deploy.IsHighRisk(), deploy.RiskScore)
+
+		// Lesson 04: Error handling demo
+		fmt.Println("\n--- Error Handling (Lesson 04) ---")
+
+		// Validation errors
+		if err := domain.ValidateDeployment("", "v1.0", "api"); err != nil {
+			fmt.Printf("Validation error: %v\n", err)
+		}
+
+		// State transition errors (AdvanceSafe)
+		if err := deploy.AdvanceSafe(domain.DeployStatusPending); err != nil {
+			fmt.Printf("State error: %v\n", err)
+		}
+
+		// Wrapping errors
+		wrapped := domain.WrapNotFound("deployment", "deploy-999")
+		fmt.Printf("Wrapped error: %v\n", wrapped)
 	case "help":
 		printBanner()
 	default:
