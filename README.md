@@ -54,7 +54,7 @@ A deployment pipeline orchestrator that:
 | 03 | Interfaces (implicit) | Port definitions | [Lesson 03](docs/03-interfaces-implicit.md) |
 | 04 | Error Handling | Domain service errors | [Lesson 04](docs/04-error-handling.md) |
 | 05 | Dependency Injection | Wire services manually | [Lesson 05](docs/05-dependency-injection.md) |
-| 06 | HTTP Server (`net/http`) | httpservice scaffold | — |
+| 06 | HTTP Server (`net/http`) | httpservice scaffold | [Lesson 06](docs/06-http-server.md) |
 | 07 | Goroutines & Channels | webhookprocessor workers | — |
 | 08 | Testing (table-driven) | Unit tests | — |
 | 09 | Configuration & Env | Config loading | — |

@@ -118,3 +118,12 @@ func (s *DeployService) GetDeploy(id string) (*Deployment, error) {
 	}
 	return deploy, nil
 }
+
+// ListDeploys returns recent deployments for a service.
+func (s *DeployService) ListDeploys(serviceName string, limit int) ([]*Deployment, error) {
+	deploys, err := s.repo.ListByService(serviceName, limit)
+	if err != nil {
+		return nil, fmt.Errorf("ListDeploys(%s): %w", serviceName, err)
+	}
+	return deploys, nil
+}

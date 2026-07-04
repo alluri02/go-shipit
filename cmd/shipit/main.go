@@ -7,10 +7,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/alluri02/go-shipit/internal/adapters/inmemory"
 	"github.com/alluri02/go-shipit/internal/domain"
+	httpserver "github.com/alluri02/go-shipit/internal/transport/http"
 )
 
 func main() {
@@ -31,11 +33,26 @@ func main() {
 	case "version":
 		fmt.Printf("shipit v%s\n", domain.Version)
 	case "serve":
-		fmt.Printf("🚀 ShipIt v%s — starting local dev server...\n", domain.Version)
-		fmt.Println("   HTTP API:    http://localhost:8080")
-		fmt.Println("   Webhooks:    http://localhost:8081")
-		fmt.Println("   ChatOps:     connected")
-		fmt.Println("   Processor:   2 workers")
+		// --- Lesson 06: HTTP Server ---
+		// Wire dependencies (Lesson 05) then start the HTTP server.
+		repo := inmemory.NewRepository()
+		queue := inmemory.NewQueue()
+		notifier := inmemory.NewNotifier()
+		service := domain.NewDeployService(repo, queue, notifier)
+
+		// Create and start the server
+		srv := httpserver.NewServer(":8080", service)
+		printBanner()
+		fmt.Println("HTTP API running at http://localhost:8080")
+		fmt.Println("Endpoints:")
+		fmt.Println("  GET  /health")
+		fmt.Println("  POST /deploys")
+		fmt.Println("  GET  /deploys/{id}")
+		fmt.Println("  GET  /deploys?service=name")
+		fmt.Println("\nPress Ctrl+C to stop.\n")
+		if err := srv.Start(); err != nil {
+			log.Fatalf("server error: %v", err)
+		}
 	case "demo":
 		// --- Lesson 05: Dependency Injection ---
 		// This is the "composition root" — where we wire all dependencies.
