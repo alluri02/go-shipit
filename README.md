@@ -61,7 +61,7 @@ A deployment pipeline orchestrator that:
 | 10 | Database (SQL, no ORM) | MySQL adapter + Skeema | [Lesson 10](docs/10-database.md) |
 | 11 | Context & Cancellation | Request lifecycle | [Lesson 11](docs/11-context.md) |
 | 12 | Middleware & Composition | Auth, logging, metrics | [Lesson 12](docs/12-middleware.md) |
-| 13 | AI Integration | Risk scorer via GitHub Models | — |
+| 13 | AI Integration | Risk scorer via GitHub Models | [Lesson 13](docs/13-ai-integration.md) |
 | 14 | CLI with Cobra | Subcommand routing | — |
 | 15 | CI/CD | GitHub Actions pipeline | — |
 
