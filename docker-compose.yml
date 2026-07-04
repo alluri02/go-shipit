@@ -1,0 +1,56 @@
+# Docker Compose for local development
+# Starts all external dependencies ShipIt needs.
+#
+# Usage:
+#   docker compose up -d      Start all services
+#   docker compose down        Stop and remove
+#   docker compose logs -f     Follow logs
+#
+# After starting, run ShipIt with:
+#   $env:SHIPIT_DATABASE_URL = "root:devpass@tcp(127.0.0.1:3306)/shipit?parseTime=true"
+#   $env:SHIPIT_QUEUE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1"
+#   .\shipit.exe serve
+
+services:
+  # ─── MySQL 8 ───
+  # Stores deployments, environments, and history.
+  # Schema managed by Skeema (see schema/ directory).
+  mysql:
+    image: mysql:8.0
+    container_name: shipit-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: devpass
+      MYSQL_DATABASE: shipit
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Auto-run schema on first start
+      - ./schema/deployments.sql:/docker-entrypoint-initdb.d/01-deployments.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ─── Azurite (Azure Storage Emulator) ───
+  # Emulates Azure Queue Storage locally.
+  # Provides the same API as Azure — your code doesn't know the difference.
+  #
+  # Endpoints:
+  #   Blob:  http://127.0.0.1:10000
+  #   Queue: http://127.0.0.1:10001
+  #   Table: http://127.0.0.1:10002
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: shipit-azurite
+    ports:
+      - "10000:10000"  # Blob
+      - "10001:10001"  # Queue
+      - "10002:10002"  # Table
+    volumes:
+      - azurite_data:/data
+
+volumes:
+  mysql_data:
+  azurite_data:

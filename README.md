@@ -70,9 +70,108 @@ A deployment pipeline orchestrator that:
 ## Quick Start
 
 ```bash
-# Prerequisites: Go 1.21+
-go run ./cmd/shipit httpservice
+# Prerequisites: Go 1.22+
+go build -o shipit.exe ./cmd/shipit
+
+# Run locally (in-memory — no external dependencies needed)
+.\shipit.exe serve
+.\shipit.exe demo
+.\shipit.exe process
 ```
+
+---
+
+## Running with Real Infrastructure
+
+### Option A: Docker Compose (local, free)
+
+```bash
+docker compose up -d
+```
+
+This starts MySQL + Azurite (Azure Storage emulator). Then:
+
+```bash
+$env:SHIPIT_DATABASE_URL = "root:devpass@tcp(127.0.0.1:3306)/shipit?parseTime=true"
+$env:SHIPIT_QUEUE_CONNECTION_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1"
+$env:SHIPIT_ENV = "development"
+.\shipit.exe serve
+```
+
+| Service | Local URL | Purpose |
+|---------|-----------|---------|
+| MySQL 8 | `127.0.0.1:3306` | Deployment persistence |
+| Azurite Queue | `127.0.0.1:10001` | Message queue (Azure Queue Storage emulator) |
+| Azurite Blob | `127.0.0.1:10000` | Blob storage (future: build artifacts) |
+| ShipIt API | `127.0.0.1:8080` | HTTP API |
+
+### Option B: Azure Resources (production)
+
+Provision these resources in Azure:
+
+```bash
+# 1. Resource Group
+az group create --name rg-shipit --location eastus
+
+# 2. Storage Account (for Queue Storage)
+az storage account create \
+  --name stshipit$(openssl rand -hex 4) \
+  --resource-group rg-shipit \
+  --sku Standard_LRS
+
+# 3. Azure Container Registry
+az acr create \
+  --name acrshipit$(openssl rand -hex 4) \
+  --resource-group rg-shipit \
+  --sku Basic
+
+# 4. Azure Database for MySQL (Flexible Server)
+az mysql flexible-server create \
+  --name mysql-shipit \
+  --resource-group rg-shipit \
+  --admin-user shipit \
+  --admin-password <YOUR_PASSWORD> \
+  --sku-name Standard_B1ms \
+  --tier Burstable
+
+# 5. Azure Container Apps Environment (deployment target)
+az containerapp env create \
+  --name cae-shipit \
+  --resource-group rg-shipit \
+  --location eastus
+```
+
+Then set environment variables:
+
+```bash
+$env:SHIPIT_ENV = "production"
+$env:SHIPIT_DATABASE_URL = "<mysql-connection-string>"
+$env:SHIPIT_QUEUE_CONNECTION_STRING = "<storage-account-connection-string>"
+$env:SHIPIT_SLACK_TOKEN = "<slack-bot-token>"
+.\shipit.exe serve
+```
+
+### What Each Resource Does
+
+| Azure Resource | ShipIt Adapter | Purpose |
+|---------------|---------------|---------|
+| **Storage Account** (Queue) | `adapters/queue/` | Deploy job queue — webhookreceiver enqueues, processor dequeues |
+| **Container Registry** | `adapters/acr/` | Stores built Docker images before deployment |
+| **MySQL Flexible Server** | `adapters/mysql/` | Persists deployments, environments, history |
+| **Container Apps** | `adapters/deployer/` | Target for deploying container images |
+| **GitHub Models** | `adapters/ai/` | GPT-4o for deploy risk scoring (uses GitHub token) |
+
+### Remaining Adapters to Implement
+
+| Adapter | Status | What's Needed |
+|---------|--------|---------------|
+| `inmemory/` | ✅ Done | Works now — no infra needed |
+| `mysql/` | ✅ Done | Just needs a running MySQL |
+| `ai/` | ✅ Done | Just needs `GITHUB_TOKEN` |
+| `queue/azure` | 🔲 TODO | Azure Storage SDK (`azqueue`) |
+| `acr/` | 🔲 TODO | Docker build + ACR push |
+| `deployer/containerapp` | 🔲 TODO | Azure Container Apps SDK |
+| `slack/` | 🔲 TODO | Slack Bot API |
 
 ---
 
