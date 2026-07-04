@@ -58,7 +58,7 @@ A deployment pipeline orchestrator that:
 | 07 | Goroutines & Channels | webhookprocessor workers | [Lesson 07](docs/07-goroutines-channels.md) |
 | 08 | Testing (table-driven) | Unit tests | [Lesson 08](docs/08-testing.md) |
 | 09 | Configuration & Env | Config loading | [Lesson 09](docs/09-configuration.md) |
-| 10 | Database (SQL, no ORM) | MySQL adapter + Skeema | — |
+| 10 | Database (SQL, no ORM) | MySQL adapter + Skeema | [Lesson 10](docs/10-database.md) |
 | 11 | Context & Cancellation | Request lifecycle | — |
 | 12 | Middleware & Composition | Auth, logging, metrics | — |
 | 13 | AI Integration | Risk scorer via GitHub Models | — |

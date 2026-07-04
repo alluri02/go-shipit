@@ -1,0 +1,32 @@
+# Skeema configuration for local development.
+# Skeema is a schema management tool for MySQL — it diffs your .sql files
+# against the live database and generates ALTER statements.
+#
+# Usage:
+#   skeema diff development    → show what would change
+#   skeema push development    → apply changes to the database
+#   skeema pull development    → pull live schema into .sql files
+#
+# Think of it as "git diff" for your database schema.
+#
+# C# equivalent: EF Core migrations (dotnet ef migrations add, dotnet ef database update)
+# Java equivalent: Flyway (flyway migrate) or Liquibase (liquibase update)
+
+[development]
+host=127.0.0.1
+port=3306
+user=root
+schema=shipit
+flavor=mysql:8.0
+
+[staging]
+host=staging-db.mysql.database.azure.com
+port=3306
+schema=shipit
+flavor=mysql:8.0
+
+[production]
+host=prod-db.mysql.database.azure.com
+port=3306
+schema=shipit
+flavor=mysql:8.0
