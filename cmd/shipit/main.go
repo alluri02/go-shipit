@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/alluri02/go-shipit/internal/adapters/inmemory"
+	"github.com/alluri02/go-shipit/internal/config"
 	"github.com/alluri02/go-shipit/internal/domain"
 	httpserver "github.com/alluri02/go-shipit/internal/transport/http"
 	"github.com/alluri02/go-shipit/internal/transport/worker"
@@ -37,17 +38,25 @@ func main() {
 	case "version":
 		fmt.Printf("shipit v%s\n", domain.Version)
 	case "serve":
-		// --- Lesson 06: HTTP Server ---
+		// --- Lesson 09: Configuration ---
+		// Load config from environment variables (12-Factor App pattern).
+		cfg := config.Load()
+		if err := cfg.Validate(); err != nil {
+			log.Fatalf("config error: %v", err)
+		}
+		log.Printf("Config: %s", cfg)
+
 		// Wire dependencies (Lesson 05) then start the HTTP server.
 		repo := inmemory.NewRepository()
 		queue := inmemory.NewQueue()
 		notifier := inmemory.NewNotifier()
 		service := domain.NewDeployService(repo, queue, notifier)
 
-		// Create and start the server
-		srv := httpserver.NewServer(":8080", service)
+		// Create and start the server using config
+		srv := httpserver.NewServer(cfg.ServerAddr, service)
 		printBanner()
-		fmt.Println("HTTP API running at http://localhost:8080")
+		fmt.Printf("HTTP API running at http://localhost%s\n", cfg.ServerAddr)
+		fmt.Printf("Environment: %s | Workers: %d\n", cfg.Env, cfg.WorkerCount)
 		fmt.Println("Endpoints:")
 		fmt.Println("  GET  /health")
 		fmt.Println("  POST /deploys")
