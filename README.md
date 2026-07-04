@@ -60,7 +60,7 @@ A deployment pipeline orchestrator that:
 | 09 | Configuration & Env | Config loading | [Lesson 09](docs/09-configuration.md) |
 | 10 | Database (SQL, no ORM) | MySQL adapter + Skeema | [Lesson 10](docs/10-database.md) |
 | 11 | Context & Cancellation | Request lifecycle | [Lesson 11](docs/11-context.md) |
-| 12 | Middleware & Composition | Auth, logging, metrics | — |
+| 12 | Middleware & Composition | Auth, logging, metrics | [Lesson 12](docs/12-middleware.md) |
 | 13 | AI Integration | Risk scorer via GitHub Models | — |
 | 14 | CLI with Cobra | Subcommand routing | — |
 | 15 | CI/CD | GitHub Actions pipeline | — |

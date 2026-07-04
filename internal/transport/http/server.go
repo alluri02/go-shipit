@@ -46,15 +46,21 @@ func NewServer(addr string, service *domain.DeployService) *Server {
 	mux.HandleFunc("GET /deploys/{id}", s.handleGetDeploy)
 	mux.HandleFunc("GET /deploys", s.handleListDeploys)
 
-	// Apply middleware chain (Lesson 11)
-	// Middleware wraps the handler — executed in reverse order (outermost first).
+	// Apply middleware chain (Lesson 12: Middleware & Composition)
+	// Chain() applies middleware in declaration order — first listed = outermost.
 	//
-	// C# equivalent: app.UseHttpLogging(); app.UseRouting(); ...
-	// Java equivalent: @Order(1) Filter, @Order(2) Filter, ...
-	var handler http.Handler = mux
-	handler = WithTimeout(10 * time.Second)(handler)
-	handler = WithLogging(handler)
-	handler = WithRequestID(handler)
+	// Request flow: Recover → CORS → RequestID → RateLimit → Logging → Timeout → Router
+	//
+	// C# equivalent: app.UseExceptionHandler(); app.UseCors(); app.UseRateLimiter(); ...
+	// Java equivalent: @Order(1) RecoverFilter, @Order(2) CorsFilter, ...
+	handler := Chain(mux,
+		WithRecover,                        // Catch panics → 500
+		WithCORS("*"),                      // Allow cross-origin (dev mode)
+		WithRequestID,                      // Add X-Request-ID
+		WithRateLimit(100),                 // 100 requests/min per IP
+		WithStructuredLogging,              // JSON request logs
+		WithTimeout(10*time.Second),        // 10s per request
+	)
 
 	s.server = &http.Server{
 		Addr:         addr,
