@@ -62,7 +62,7 @@ A deployment pipeline orchestrator that:
 | 11 | Context & Cancellation | Request lifecycle | [Lesson 11](docs/11-context.md) |
 | 12 | Middleware & Composition | Auth, logging, metrics | [Lesson 12](docs/12-middleware.md) |
 | 13 | AI Integration | Risk scorer via GitHub Models | [Lesson 13](docs/13-ai-integration.md) |
-| 14 | CLI with Cobra | Subcommand routing | — |
+| 14 | CLI with Cobra | Subcommand routing | [Lesson 14](docs/14-cli.md) |
 | 15 | CI/CD | GitHub Actions pipeline | — |
 
 ---
