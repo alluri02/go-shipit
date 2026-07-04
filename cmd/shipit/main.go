@@ -53,7 +53,7 @@ func main() {
 		fmt.Println("  POST /deploys")
 		fmt.Println("  GET  /deploys/{id}")
 		fmt.Println("  GET  /deploys?service=name")
-		fmt.Println("\nPress Ctrl+C to stop.\n")
+		fmt.Print("\nPress Ctrl+C to stop.\n\n")
 		if err := srv.Start(); err != nil {
 			log.Fatalf("server error: %v", err)
 		}
@@ -127,7 +127,7 @@ func main() {
 			fmt.Printf("→ Submitted: %s (%s)\n", job.DeploymentID, job.ServiceName)
 		}
 
-		fmt.Println("\nAll jobs submitted. Workers processing concurrently...\n")
+		fmt.Print("\nAll jobs submitted. Workers processing concurrently...\n\n")
 		time.Sleep(100 * time.Millisecond) // Let workers start before we close
 
 		// Stop and wait for all workers to complete

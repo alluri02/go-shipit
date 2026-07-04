@@ -56,7 +56,7 @@ A deployment pipeline orchestrator that:
 | 05 | Dependency Injection | Wire services manually | [Lesson 05](docs/05-dependency-injection.md) |
 | 06 | HTTP Server (`net/http`) | httpservice scaffold | [Lesson 06](docs/06-http-server.md) |
 | 07 | Goroutines & Channels | webhookprocessor workers | [Lesson 07](docs/07-goroutines-channels.md) |
-| 08 | Testing (table-driven) | Unit tests | — |
+| 08 | Testing (table-driven) | Unit tests | [Lesson 08](docs/08-testing.md) |
 | 09 | Configuration & Env | Config loading | — |
 | 10 | Database (SQL, no ORM) | MySQL adapter + Skeema | — |
 | 11 | Context & Cancellation | Request lifecycle | — |
