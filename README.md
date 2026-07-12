@@ -67,6 +67,27 @@ A deployment pipeline orchestrator that:
 
 ---
 
+## Docker Learning Track
+
+Once you've built ShipIt, learn the other half of "production-grade": **how that binary gets
+packaged, shipped, and run as a container.** This is a parallel track in [`docs/docker/`](docs/docker/) —
+same teach-by-analogy style, grounded in this repo's *real* `Dockerfile` and `docker-compose.yml`.
+
+| # | Docker Concept | What You'll Understand | Doc |
+|---|---------------|------------------------|-----|
+| 01 | How Docker Works Under the Hood | CLI → `dockerd` → `containerd` → `runc` → kernel | [Lesson 01](docs/docker/01-how-docker-works.md) |
+| 02 | Images & Layers | Union filesystem, read-only layers, copy-on-write | [Lesson 02](docs/docker/02-images-and-layers.md) |
+| 03 | Dockerfile Deep Dive | Multi-stage builds, `FROM scratch`, layer caching | [Lesson 03](docs/docker/03-dockerfile-deep-dive.md) |
+| 04 | Containers & Isolation | namespaces, cgroups, capabilities, seccomp | [Lesson 04](docs/docker/04-containers-and-isolation.md) |
+| 05 | Registries | Docker Hub / ACR / GHCR / GAR, push, pull, digests | [Lesson 05](docs/docker/05-registries.md) |
+| 06 | Docker Compose | Multi-container local dev (MySQL + Azurite) | [Lesson 06](docs/docker/06-docker-compose.md) |
+| 07 | Networking & Volumes | Bridge networks, port publishing, persistence | [Lesson 07](docs/docker/07-networking-and-volumes.md) |
+| 08 | Best Practices & Security | Small images, non-root, scanning, signing | [Lesson 08](docs/docker/08-best-practices-and-security.md) |
+
+▶ **Start here:** [Docker Track Index](docs/docker/README.md)
+
+---
+
 ## Quick Start
 
 ```bash
@@ -185,6 +206,7 @@ go-shipit/
 │   ├── ports/            ← Interfaces (future)
 │   └── adapters/         ← External integrations (future)
 ├── docs/                 ← One doc per lesson
+│   └── docker/           ← Docker learning track (8 lessons)
 ├── go.mod                ← Module definition
 └── README.md
 ```
