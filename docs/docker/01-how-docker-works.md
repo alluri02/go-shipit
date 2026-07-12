@@ -5,6 +5,16 @@
 
 ---
 
+## Reference Diagram
+
+![How Docker Works Under the Hood](images/how-docker-works-under-the-hood.png)
+
+<sub>The full flow this lesson traces — CLI → `dockerd` → `containerd` → `runc` → shared kernel,
+with the registry column and Union FS image layers. Everything below is a written walk-through of
+this diagram. *(Diagram credit: alluri02)*</sub>
+
+---
+
 ## The One Command, Fully Traced
 
 ```bash
