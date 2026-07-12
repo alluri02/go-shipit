@@ -41,6 +41,13 @@ wondered "what's the difference between `dockerd`, `containerd`, and `runc`?" or
 Docker is not one program. It's a **stack of components**, each with one job. This is the
 single most important thing to understand — everything else falls into place once you see it:
 
+![How Docker Works Under the Hood](images/how-docker-works-under-the-hood.png)
+
+<sub>*The full flow, end to end. [Lesson 01](01-how-docker-works.md) walks through every stage.
+Diagram credit: alluri02.*</sub>
+
+Or, distilled to the essential path:
+
 ```mermaid
 flowchart TD
     U["👤 You type:<br/>docker run -p 8080:80 nginx"] --> CLI["Docker CLI"]
